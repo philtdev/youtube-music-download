@@ -1,25 +1,26 @@
 #!/usr/bin/env bash
 
+default_artist="Gentleman"
+default_album="House Mixes"
+default_album_artist="Various"
+
 echo
 echo "Download and convert a YouTube video to an MP3 file."
 echo
 
 # Form
 
-echo -n "URL: "
-read -r url
+read -p "URL: " url
+read -p "Title: " title
+read -p "Artist [$default_artist]: " artist
+read -p "Album [$default_album]: " album
+read -p "Album artist [$default_album_artist]: " album_artist
 
-echo -n "Title: "
-read -r title
+# Assign default values if none entered
 
-echo -n "Artist: "
-read -r artist
-
-echo -n "Album: "
-read -r album
-
-echo -n "Album artist: "
-read -r album_artist
+artist=${artist:-$default_artist}
+album=${album:-$default_album}
+album_artist=${album_artist:-$default_album_artist}
 
 file_name="$HOME/Music/$artist - $title"
 
@@ -47,7 +48,7 @@ ffmpeg \
 	-y \
 	-i "$file_name.tmp.mp3" \
 	-metadata title="$title" \
-	-metadata artist="$artist" \
+	-metadata artist="${artist:" \
 	-metadata album_artist="$album_artist" \
 	-metadata album="$album" \
 	"$file_name.mp3" \
