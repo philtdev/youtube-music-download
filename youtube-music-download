@@ -1,25 +1,37 @@
 #!/usr/bin/env bash
 
+# Summary
+
 echo
 echo "Download and convert a YouTube video to an MP3 file."
 echo
 
+
 # Form
 
-echo -n "URL: "
-read -r url
+echo -n "YouTube video URL: "
+read -r youtube_video_url
 
-echo -n "Title: "
+echo -n "Track title: "
 read -r title
 
-echo -n "Artist: "
+echo -n "Lead artist: "
 read -r artist
 
-echo -n "Album: "
+echo -n "Album-level artist: "
+read -r album_artist
+
+echo -n "Album name: "
 read -r album
 
-echo -n "Album artist: "
-read -r album_artist
+echo -n "Release date or year: "
+read -r date
+
+echo -n "Track number: "
+read -r track
+
+echo -n "Genre: "
+read -r genre
 
 file_name="$HOME/Music/$artist - $title"
 
@@ -28,7 +40,7 @@ echo "Downloading and converting. Please wait..."
 echo
 
 
-# Download audio from video URL
+# Extract audio from YouTube video and save to temporary file
 
 yt-dlp \
 	--force-overwrites \
@@ -36,11 +48,11 @@ yt-dlp \
 	--format bestaudio \
 	--audio-format mp3 \
 	--output "$file_name.tmp.%(ext)s" \
-	"$url" \
+	"$youtube_video_url" \
 	1> /dev/null
 
 
-# Add metadata
+# Add metadata and save converted audio file
 
 ffmpeg \
 	-loglevel error \
@@ -50,14 +62,19 @@ ffmpeg \
 	-metadata artist="$artist" \
 	-metadata album_artist="$album_artist" \
 	-metadata album="$album" \
+	-metadata date="$date" \
+	-metadata track="$track" \
+	-metadata genre="$genre" \
 	"$file_name.mp3" \
 	1> /dev/null
 
 
-# Remove temporary file
+# Remove temporary audio file
 
 rm "$file_name.tmp.mp3"
 
+
+# Final message
 
 echo "Download and conversion complete!"
 echo
